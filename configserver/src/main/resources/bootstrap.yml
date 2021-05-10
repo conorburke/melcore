@@ -20,7 +20,9 @@ spring:
           search-locations: classpath:/config
         git:
           uri: https://github.com/conorburke/melcore-config.git
-          searchPaths: itemsservice
+          searchPaths: 
+            - itemsservice
+            - eurekaservice
           default-label: main
     
 server:
