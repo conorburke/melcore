@@ -1,0 +1,54 @@
+version: '2.1'
+services:
+  database:
+    image: postgres:latest
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: ${MELCORE_DB_ITEMS_PASSWORD}
+      POSTGRES_DB: "melcore_items_dev"
+    volumes:
+      - ./sample_db_files/init.sql:/docker-entrypoint-initdb.d/1-init.sql
+      - ./sample_db_files/data.sql:/docker-entrypoint-initdb.d/2-data.sql
+    networks:
+      backend:
+        aliases:
+          - "database"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  configserver:
+    image: conorburke/melcore-configserver:0.0.1-SNAPSHOT
+    ports:
+       - "8071:8071"
+    environment:
+      ENCRYPT_KEY: ${ENCRYPT_KEY}
+    networks:
+      backend:
+        aliases:
+          - "configserver"
+  melcore-items:
+    image: conorburke/melcore-items:0.0.1-SNAPSHOT
+    environment:
+      PROFILE: "dev"
+      CONFIGSERVER_URI: "http://configserver:8071"
+      CONFIGSERVER_PORT:   "8071"
+      DATABASESERVER_PORT: "5432"
+      ENCRYPT_KEY: ${ENCRYPT_KEY}
+    depends_on:
+      database:
+        condition: service_healthy
+      configserver:
+        condition: service_started
+    ports:
+      - "8080:8080"
+    networks:
+      - backend
+    restart: always
+
+networks:
+  backend:
+    driver: bridge
