@@ -1,6 +1,6 @@
 version: '2.1'
 services:
-  database:
+  database-items:
     image: postgres:latest
     ports:
       - "5432:5432"
@@ -9,12 +9,32 @@ services:
       POSTGRES_PASSWORD: ${MELCORE_DB_ITEMS_PASSWORD}
       POSTGRES_DB: "melcore_items_dev"
     volumes:
-      - ./sample_db_files/init.sql:/docker-entrypoint-initdb.d/1-init.sql
-      - ./sample_db_files/data.sql:/docker-entrypoint-initdb.d/2-data.sql
+      - ./sample_db_files/items/init.sql:/docker-entrypoint-initdb.d/1-init.sql
+      - ./sample_db_files/items/data.sql:/docker-entrypoint-initdb.d/2-data.sql
     networks:
       backend:
         aliases:
-          - "database"
+          - "database-items"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  database-owners:
+    image: postgres:latest
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: ${MELCORE_DB_OWNERS_PASSWORD}
+      POSTGRES_DB: "melcore_owners_dev"
+    volumes:
+      - ./sample_db_files/owners/init.sql:/docker-entrypoint-initdb.d/1-init.sql
+      - ./sample_db_files/owners/data.sql:/docker-entrypoint-initdb.d/2-data.sql
+    networks:
+      backend:
+        aliases:
+          - "database-owners"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
@@ -35,7 +55,9 @@ services:
     ports:
       - "8070:8070"
     depends_on:
-      database:
+      database-items:
+        condition: service_healthy
+      database-owners:
         condition: service_healthy
       configserver:
         condition: service_started  
@@ -52,12 +74,30 @@ services:
       DATABASESERVER_PORT: "5432"
       ENCRYPT_KEY: ${ENCRYPT_KEY}
     depends_on:
-      database:
+      database-items:
         condition: service_healthy
       configserver:
         condition: service_started
     ports:
       - "8080:8080"
+    networks:
+      - backend
+    restart: always
+  melcore-owners:
+    image: conorburke/melcore-owners:0.0.1-SNAPSHOT
+    environment:
+      PROFILE: "dev"
+      CONFIGSERVER_URI: "http://configserver:8071"
+      CONFIGSERVER_PORT:   "8071"
+      DATABASESERVER_PORT: "5432"
+      ENCRYPT_KEY: ${ENCRYPT_KEY}
+    depends_on:
+      database-owners:
+        condition: service_healthy
+      configserver:
+        condition: service_started
+    ports:
+      - "8081:8080"
     networks:
       - backend
     restart: always

@@ -23,6 +23,7 @@ spring:
           searchPaths: 
             - itemsservice
             - eurekaservice
+            - ownersservice
           default-label: main
     
 server:

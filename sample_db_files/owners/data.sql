@@ -1,0 +1,2 @@
+INSERT INTO public.owners VALUES ('a2a9c9d4-d2c0-44fa-97fe-724d77173c62', 'Randy', 'Lahey', 'randy@test.com');
+INSERT INTO public.owners VALUES ('a79709ff-e6d5-4a54-8b55-a5c37542025b', 'Jim', 'Lahey', 'jim@test.com');
