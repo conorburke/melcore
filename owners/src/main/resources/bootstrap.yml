@@ -1,8 +1,8 @@
 spring:
-  application:
-    name: owners-service 
-  profiles:
-    active: dev
-  cloud:
-      config: 
-          uri: http://configserver:8071
+    application:
+        name: owners-service 
+    profiles:
+        active: dev
+    cloud:
+        config: 
+            uri: http://configserver:8071
