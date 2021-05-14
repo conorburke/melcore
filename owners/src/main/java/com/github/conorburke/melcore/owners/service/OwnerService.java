@@ -1,5 +1,6 @@
 package com.github.conorburke.melcore.owners.service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -14,6 +15,10 @@ public class OwnerService {
 	
     @Autowired
     private OwnerRepository repository;
+
+    public List<Owner> getOwners() {
+        return repository.findAll();
+    }
 
     public Owner findById(String ownerId) {
     	Optional<Owner> opt = repository.findById(ownerId);
