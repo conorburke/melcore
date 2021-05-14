@@ -1,5 +1,6 @@
 package com.github.conorburke.melcore.items.service;
 
+import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 import java.util.UUID;
@@ -25,15 +26,20 @@ public class ItemService {
     @Autowired
     ServiceConfig config;
 
-    public Item getItem(String itemId, String ownerId) {
+    public List<Item> getItems() {
+        // return itemRepository.findItems();
+        return itemRepository.findAll();
+    }
+
+    public Item getItem(String itemId) {
         // Item item = new Item();
         // item.setItemId(itemId);
         // item.setOwnerId(ownerId);
 
-        Item item = itemRepository.findByOwnerIdAndItemId(ownerId, itemId);
+        Item item = itemRepository.findByItemId(itemId);
 
         if (item == null) {
-            throw new IllegalArgumentException(String.format(messages.getMessage("item.search.error.message", null, null), itemId, ownerId));
+            throw new IllegalArgumentException(String.format(messages.getMessage("item.search.error.message", null, null), itemId));
         }
 
         return item;
