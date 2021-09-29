@@ -7,9 +7,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class ItemServiceApplicationTests {
 
-	// @Test
+	@Test
 	// need to disable this so we can build it without relying on config server to be running
-	@Disabled
+	// @Disabled
 	void contextLoads() {
 	}
 
