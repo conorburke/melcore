@@ -103,7 +103,7 @@ services:
       configserver:
         condition: service_started
     ports:
-      - "8080:8080"
+      - "8082:8080"
     networks:
       - backend
     restart: always
@@ -125,6 +125,18 @@ services:
     networks:
       - backend
     restart: always
+  keycloak:
+    image: jboss/keycloak
+    restart: always
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: ${MELCORE_KEYCLOAK_PASSWORD}
+    ports:
+      - "8080:8080"
+    networks:
+      backend:
+        aliases:
+          - "keycloak"
 
 networks:
   backend:

@@ -44,6 +44,7 @@ public class ItemServiceApplication {
 		return messageSource;
 	}
 
+	// may be outdated. reference 'on service discovery'
 	@SuppressWarnings("unchecked")
 	@LoadBalanced
 	@Bean

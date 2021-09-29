@@ -1,0 +1,8 @@
+spring:
+    application:
+        name: items-service
+    profiles:
+        active: test
+    cloud:
+        config:
+            enabled: false
