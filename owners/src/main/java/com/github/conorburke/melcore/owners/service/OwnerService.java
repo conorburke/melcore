@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.github.conorburke.melcore.owners.events.source.SimpleSourceBean;
 import com.github.conorburke.melcore.owners.model.Owner;
 import com.github.conorburke.melcore.owners.repository.OwnerRepository;
 
@@ -15,6 +16,9 @@ public class OwnerService {
 	
     @Autowired
     private OwnerRepository repository;
+
+    @Autowired
+    SimpleSourceBean simpleSourceBean;
 
     public List<Owner> getOwners() {
         return repository.findAll();
@@ -28,6 +32,7 @@ public class OwnerService {
     public Owner create(Owner owner){
     	owner.setId( UUID.randomUUID().toString());
         owner = repository.save(owner);
+        simpleSourceBean.publishOwnerChange("SAVE", owner.getId());
         return owner;
 
     }
